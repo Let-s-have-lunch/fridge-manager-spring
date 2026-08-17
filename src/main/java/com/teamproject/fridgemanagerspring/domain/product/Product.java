@@ -5,7 +5,7 @@ import com.teamproject.fridgemanagerspring.domain.common.BaseTimeEntity;
 import com.teamproject.fridgemanagerspring.domain.enums.ProductStatus;
 import com.teamproject.fridgemanagerspring.domain.enums.StorageType;
 import com.teamproject.fridgemanagerspring.domain.enums.Unit;
-import com.example.fridgemanagerspring.domain.fridge.Fridge;
+import com.teamproject.fridgemanagerspring.domain.fridge.Fridge;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
