@@ -5,10 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-// 유저 담당 팀원분!!
-// 이파일은 유저를 참조하는 파일이 너무 많아서 임시로 생성해둔 더미파일 입니다.
-// 작업시작하면, 이 파일 내용 지우고 다시 작성하시면 됩니다.!
-
+// JpaRepository<엔티티 클래스, PK 데이터 타입>을 상속받습니다.
 public interface UserRepository extends JpaRepository<User, Long> {
 
     // 1. Prisma: prisma.user.findUnique({ where: { email } })
