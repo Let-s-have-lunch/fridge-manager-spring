@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -55,9 +56,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity getMe() {
-        // TODO: Spring Security 설정 후 SecurityContext에서 가져올 예정
-        Long currentUserId = 1L;
+    public ResponseEntity getMe(@AuthenticationPrincipal Long currentUserId) {
         try {
             User user = userService.getUserById(currentUserId);
             return ResponseEntity.ok(Map.of("message", "사용자 정보 확인이 완료되었습니다.", "data", user));
@@ -67,8 +66,10 @@ public class UserController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity updateUser(@Valid @RequestBody UpdateUserRequest request) {
-        Long currentUserId = 1L;
+    public ResponseEntity updateUser(
+            @AuthenticationPrincipal Long currentUserId,
+            @Valid @RequestBody UpdateUserRequest request
+    ) {
         try {
             User updatedUser = userService.updateUser(currentUserId, request);
             return ResponseEntity.ok(Map.of("message", "회원 정보가 성공적으로 수정되었습니다.", "data", updatedUser));
@@ -82,8 +83,10 @@ public class UserController {
     }
 
     @PatchMapping("/password")
-    public ResponseEntity updatePassword(@Valid @RequestBody UpdatePasswordRequest request) {
-        Long currentUserId = 1L;
+    public ResponseEntity updatePassword(
+            @AuthenticationPrincipal Long currentUserId,
+            @Valid @RequestBody UpdatePasswordRequest request
+    ) {
         try {
             userService.updatePassword(currentUserId, request);
             return ResponseEntity.ok(Map.of("message", "비밀번호가 성공적으로 변경되었습니다."));
@@ -97,7 +100,9 @@ public class UserController {
     }
 
     @PostMapping("/password-reset")
-    public ResponseEntity resetPassword(@RequestBody ResetPasswordRequest request) {
+    public ResponseEntity resetPassword(
+            @RequestBody ResetPasswordRequest request
+    ) {
         try {
             userService.resetPassword(request.getEmail(), request.getNewPassword());
             return ResponseEntity.ok(Map.of("success", true, "message", "비밀번호가 성공적으로 변경되었습니다."));
@@ -112,8 +117,10 @@ public class UserController {
     }
 
     @PatchMapping("/withdraw")
-    public ResponseEntity withdrawUser(@Valid @RequestBody WithdrawUserRequest request) {
-        Long currentUserId = 1L;
+    public ResponseEntity withdrawUser(
+            @AuthenticationPrincipal Long currentUserId,
+            @Valid @RequestBody WithdrawUserRequest request
+    ) {
         try {
             userService.withdrawUser(currentUserId, request);
             return ResponseEntity.ok(Map.of("message", "회원 탈퇴가 성공적으로 처리되었습니다."));
