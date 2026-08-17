@@ -21,7 +21,6 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/create")
-    // @Valid가 CreateUserRequest 내부의 조건들을 검사하고, 실패 시 GlobalExceptionHandler로 던집니다.
     public ResponseEntity createUser(@Valid @RequestBody CreateUserRequest request) {
         try {
             User newUser = userService.createUser(request);
