@@ -1,7 +1,7 @@
 package com.teamproject.fridgemanagerspring.dto.shoppinglist.response;
 
 
-import com.teamproject.fridgemanagerspring.domain.shoppingList.ShoppingList;
+import com.teamproject.fridgemanagerspring.domain.shoppinglist.ShoppingList;
 import lombok.Builder;
 import lombok.Getter;
 

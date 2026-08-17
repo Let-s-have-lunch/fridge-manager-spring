@@ -1,6 +1,6 @@
 package com.teamproject.fridgemanagerspring.repository;
 
-import com.teamproject.fridgemanagerspring.domain.shoppingList.ShoppingList;
+import com.teamproject.fridgemanagerspring.domain.shoppinglist.ShoppingList;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

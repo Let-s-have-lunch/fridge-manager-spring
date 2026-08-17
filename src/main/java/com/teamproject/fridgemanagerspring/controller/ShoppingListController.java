@@ -1,6 +1,6 @@
 package com.teamproject.fridgemanagerspring.controller;
 
-import com.teamproject.fridgemanagerspring.domain.shoppingList.ShoppingList;
+import com.teamproject.fridgemanagerspring.domain.shoppinglist.ShoppingList;
 import com.teamproject.fridgemanagerspring.dto.shoppinglist.request.ShoppingListRequest;
 import com.teamproject.fridgemanagerspring.dto.shoppinglist.response.ShoppingListResponse;
 import com.teamproject.fridgemanagerspring.service.ShoppingListService;
