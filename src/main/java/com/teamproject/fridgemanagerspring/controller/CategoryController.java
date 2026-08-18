@@ -2,6 +2,7 @@ package com.teamproject.fridgemanagerspring.controller;
 
 import com.teamproject.fridgemanagerspring.domain.category.Category;
 import com.teamproject.fridgemanagerspring.dto.category.request.CategoryRequest;
+import com.teamproject.fridgemanagerspring.dto.category.response.CategoryResponse;
 import com.teamproject.fridgemanagerspring.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,9 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<Map<String, Object>> getCategoryList(@AuthenticationPrincipal Long currentUserId) {
         try {
-            List result = categoryService.getCategoryList(currentUserId);
+            List<CategoryResponse> result = categoryService.getCategoryList(currentUserId).stream()
+                    .map(CategoryResponse::from)
+                    .toList();
             return ResponseEntity.ok(Map.of("message", "카테고리 목록 조회 성공", "data", result));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -37,7 +40,9 @@ public class CategoryController {
             @Valid @RequestBody CategoryRequest request) {
         try {
             Category result = categoryService.createCategory(currentUserId, request.getName());
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "카테고리 생성 성공", "data", result));
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                    "message", "카테고리 생성 성공",
+                    "data", CategoryResponse.from(result)));
         } catch (RuntimeException e) {
             if (e.getMessage().equals("DUPLICATED_CATEGORY")) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "이미 존재하는 카테고리입니다."));
@@ -53,7 +58,10 @@ public class CategoryController {
             @Valid @RequestBody CategoryRequest request) {
         try {
             Category result = categoryService.updateCategory(currentUserId, categoryId, request.getName());
-            return ResponseEntity.ok(Map.of("message", "카테고리 수정 성공", "data", result));
+            return ResponseEntity.ok(Map.of(
+                    "message", "카테고리 수정 성공",
+                    "data", CategoryResponse.from(result)
+            ));
         } catch (RuntimeException e) {
             if (e.getMessage().equals("CATEGORY_NOT_FOUND"))
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "해당 카테고리를 찾을 수 없습니다."));

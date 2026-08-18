@@ -1,8 +1,11 @@
 package com.teamproject.fridgemanagerspring.domain.user;
 
+import com.teamproject.fridgemanagerspring.domain.category.Category;
 import com.teamproject.fridgemanagerspring.domain.common.BaseTimeEntity;
+import com.teamproject.fridgemanagerspring.domain.enums.RoleType;
+import com.teamproject.fridgemanagerspring.domain.fridge.Fridge;
+import com.teamproject.fridgemanagerspring.domain.shoppinglist.ShoppingList;
 import jakarta.persistence.*;
-import jdk.jfr.Category;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,16 +34,14 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
-    private LocalDate birthdate; // DateTime? 매핑
+    private LocalDate birthdate;
     private Boolean isDeleted = false;
     private LocalDateTime deletedAt;
 
-    @Enumerated(EnumType.STRING) // Enum 이름을 문자열 그대로 DB에 저장
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoleType role = RoleType.USER;
 
-    // Prisma의 역방향 참조(categories Category[]) 매핑
-    // mappedBy = "user" 는 Category 엔티티에 만들어질 user 필드명을 의미합니다.
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Category> categories = new ArrayList<>();
 

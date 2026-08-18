@@ -1,6 +1,7 @@
 package com.teamproject.fridgemanagerspring.controller;
 
 import com.teamproject.fridgemanagerspring.dto.fridge.request.FridgeRequest;
+import com.teamproject.fridgemanagerspring.dto.fridge.response.FridgeResponse;
 import com.teamproject.fridgemanagerspring.service.FridgeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,9 @@ public class FridgeController {
     @GetMapping("/")
     public ResponseEntity<Map<String, Object>> getFridgeList(@AuthenticationPrincipal Long currentUserId) {
         try {
-            List list = fridgeService.getFridgeList(currentUserId);
+            List<FridgeResponse> list = fridgeService.getFridgeList(currentUserId).stream()
+                    .map(FridgeResponse::from)
+                    .toList();
             return ResponseEntity.ok(Map.of(
                     "message", "냉장고 목록을 성공적으로 불러왔습니다.",
                     "data", list
@@ -41,7 +44,7 @@ public class FridgeController {
             com.teamproject.fridgemanagerspring.domain.fridge.Fridge newFridge = fridgeService.createFridge(currentUserId, request.getName());
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                     "message", "냉장고가 성공적으로 등록되었습니다.",
-                    "data", newFridge
+                    "data", FridgeResponse.from(newFridge)
             ));
         } catch (RuntimeException e) {
             if (e.getMessage().equals("ALREADY_EXISTS_NAME")) {
@@ -63,7 +66,7 @@ public class FridgeController {
             com.teamproject.fridgemanagerspring.domain.fridge.Fridge updatedFridge = fridgeService.updateFridge(currentUserId, id, request.getName());
             return ResponseEntity.ok(Map.of(
                     "message", "냉장고 정보가 성공적으로 수정되었습니다.",
-                    "data", updatedFridge
+                    "data", FridgeResponse.from(updatedFridge)
             ));
         } catch (RuntimeException e) {
             if (e.getMessage().equals("NOT_FOUND_FRIDGE")) {

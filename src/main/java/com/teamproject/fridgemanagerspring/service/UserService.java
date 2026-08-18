@@ -1,7 +1,9 @@
 package com.teamproject.fridgemanagerspring.service;
 
+import com.teamproject.fridgemanagerspring.domain.fridge.Fridge;
 import com.teamproject.fridgemanagerspring.domain.user.User;
 import com.teamproject.fridgemanagerspring.dto.user.request.*;
+import com.teamproject.fridgemanagerspring.repository.FridgeRepository;
 import com.teamproject.fridgemanagerspring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
