@@ -81,4 +81,40 @@ public class Product extends BaseTimeEntity {
         this.fridge = fridge;
         this.category = category;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateMemo(String memo) {
+        this.memo = memo;
+    }
+
+    public void updateStorageType(StorageType storageType) {
+        this.storageType = storageType;
+    }
+
+    public void updateQuantity(Double quantity) {
+        this.quantity = quantity;
+    }
+
+    public void updateUnit(Unit unit) {
+        this.unit = unit;
+    }
+
+    public void updatePrice(Integer price) {
+        this.price = price;
+    }
+
+    public void updateExpirationDate(LocalDate expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public void updateStatus(ProductStatus status) {
+        this.status = status;
+    }
+
+    public void changeCategory(Category category) {
+        this.category = category;
+    }
 }
