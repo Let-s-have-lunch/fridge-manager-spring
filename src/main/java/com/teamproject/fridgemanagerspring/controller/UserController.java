@@ -21,11 +21,15 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/create")
-    public ResponseEntity createUser(@Valid @RequestBody CreateUserRequest request) {
+    // @Valid가 CreateUserRequest 내부의 조건들을 검사하고, 실패 시 GlobalExceptionHandler로 던집니다.
+    public ResponseEntity<Map<String, Object>> createUser(@Valid @RequestBody CreateUserRequest request) {
         try {
             User newUser = userService.createUser(request);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(Map.of("message", "성공적으로 회원가입 되었습니다.", "data", newUser));
+                    .body(Map.of(
+                            "message", "성공적으로 회원가입 되었습니다.",
+                            "data", UserResponse.from(newUser)
+                    ));
         } catch (RuntimeException e) {
             if (e.getMessage().equals("ALREADY_EXISTS_EMAIL"))
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "이미 가입된 이메일입니다."));
@@ -36,7 +40,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest request) {
         try {
             User user = userService.login(request);
             String token = jwtUtil.generateToken(user.getId());
@@ -44,34 +48,43 @@ public class UserController {
             return ResponseEntity.ok(
                     Map.of(
                             "message", "로그인에 성공했습니다.",
-                            "data", Map.of("user", user, "token", token)
+                            "data", Map.of(
+                                    "user", UserResponse.from(user),
+                                    "token", token
+                            )
                     )
             );
         } catch (RuntimeException e) {
-            if (e.getMessage().equals("INVALID_CREDENTIALS"))
+            if (e.getMessage().equals("INVALID_CREDENTIAL"))
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "아이디 또는 비밀번호가 일치하지 않습니다."));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "서버 에러"));
         }
     }
 
     @GetMapping("/me")
-    public ResponseEntity getMe(@AuthenticationPrincipal Long currentUserId) {
+    public ResponseEntity<Map<String, Object>> getMe(@AuthenticationPrincipal Long currentUserId) {
         try {
             User user = userService.getUserById(currentUserId);
-            return ResponseEntity.ok(Map.of("message", "사용자 정보 확인이 완료되었습니다.", "data", user));
+            return ResponseEntity.ok(Map.of(
+                    "message", "사용자 정보 확인이 완료되었습니다.",
+                    "data", UserResponse.from(user)
+            ));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "유효하지 않은 사용자이거나 탈퇴한 계정입니다."));
         }
     }
 
     @PatchMapping("/update")
-    public ResponseEntity updateUser(
+    public ResponseEntity<Map<String, Object>> updateUser(
             @AuthenticationPrincipal Long currentUserId,
             @Valid @RequestBody UpdateUserRequest request
     ) {
         try {
             User updatedUser = userService.updateUser(currentUserId, request);
-            return ResponseEntity.ok(Map.of("message", "회원 정보가 성공적으로 수정되었습니다.", "data", updatedUser));
+            return ResponseEntity.ok(Map.of(
+                    "message", "회원 정보가 성공적으로 수정되었습니다.",
+                    "data", UserResponse.from(updatedUser)
+            ));
         } catch (RuntimeException e) {
             if (e.getMessage().equals("USER_NOT_FOUND"))
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "해당 사용자를 찾을 수 없습니다."));
@@ -82,7 +95,7 @@ public class UserController {
     }
 
     @PatchMapping("/password")
-    public ResponseEntity updatePassword(
+    public ResponseEntity<Map<String, Object>> updatePassword(
             @AuthenticationPrincipal Long currentUserId,
             @Valid @RequestBody UpdatePasswordRequest request
     ) {
@@ -99,8 +112,8 @@ public class UserController {
     }
 
     @PostMapping("/password-reset")
-    public ResponseEntity resetPassword(
-            @RequestBody ResetPasswordRequest request
+    public ResponseEntity<Map<String, Object>> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request
     ) {
         try {
             userService.resetPassword(request.getEmail(), request.getNewPassword());
@@ -111,12 +124,12 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity logout() {
+    public ResponseEntity<Map<String, Object>> logout() {
         return ResponseEntity.ok(Map.of("message", "성공적으로 로그아웃되었습니다."));
     }
 
     @PatchMapping("/withdraw")
-    public ResponseEntity withdrawUser(
+    public ResponseEntity<Map<String, Object>> withdrawUser(
             @AuthenticationPrincipal Long currentUserId,
             @Valid @RequestBody WithdrawUserRequest request
     ) {
@@ -126,7 +139,7 @@ public class UserController {
         } catch (RuntimeException e) {
             if (e.getMessage().equals("USER_NOT_FOUND"))
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "해당 사용자를 찾을 수 없습니다."));
-            if (e.getMessage().equals("INVALID_PASSWORD"))
+            if (e.getMessage().equals("INVALID_CREDENTIAL"))
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "현재 비밀번호가 일치하지 않습니다."));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "서버 에러"));
         }

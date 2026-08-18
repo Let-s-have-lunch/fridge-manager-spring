@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 
-// DTO (Data Transfer Object) 클래스 + Validation 어노테이션
 @Getter
 @Setter
 public class CreateUserRequest {
@@ -23,6 +22,5 @@ public class CreateUserRequest {
     @Email(message = "올바른 이메일 형식이 아닙니다.")
     private String email;
 
-    // Zod에서 z.string().optional()로 처리한 부분
     private String birthdate;
 }
