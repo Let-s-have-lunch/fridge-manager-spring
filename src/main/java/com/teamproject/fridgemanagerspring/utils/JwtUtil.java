@@ -25,7 +25,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // 토큰에서 userId 추출
     public Long getUserIdFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(key)
