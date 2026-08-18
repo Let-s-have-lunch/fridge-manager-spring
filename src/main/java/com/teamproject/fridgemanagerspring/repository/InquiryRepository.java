@@ -16,4 +16,6 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
     // 2. 단건 조회 (User 정보 JOIN FETCH)
     @Query("SELECT i FROM Inquiry i JOIN FETCH i.user WHERE i.id = :id")
     Optional<Inquiry> findByIdWithUser(@Param("id") Long id);
+
+    Page<Inquiry> findAllByOrderByIdDesc(Pageable pageable);
 }
