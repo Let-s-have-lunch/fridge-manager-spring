@@ -1,9 +1,9 @@
 package com.teamproject.fridgemanagerspring.domain.user;
 
-import com.example.fridgemanagerspring.domain.inquiry.Inquiry;
 import com.teamproject.fridgemanagerspring.domain.common.BaseTimeEntity;
 import com.teamproject.fridgemanagerspring.domain.enums.RoleType;
 import com.teamproject.fridgemanagerspring.domain.fridge.Fridge;
+import com.teamproject.fridgemanagerspring.domain.inquriy.Inquiry;
 import com.teamproject.fridgemanagerspring.domain.shoppinglist.ShoppingList;
 import jakarta.persistence.*;
 import jdk.jfr.Category;
@@ -15,7 +15,6 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
