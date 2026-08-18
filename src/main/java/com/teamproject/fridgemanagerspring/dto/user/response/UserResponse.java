@@ -1,5 +1,6 @@
 package com.teamproject.fridgemanagerspring.dto.user.response;
 
+import com.teamproject.fridgemanagerspring.domain.enums.RoleType;
 import com.teamproject.fridgemanagerspring.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;

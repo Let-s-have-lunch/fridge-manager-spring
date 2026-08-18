@@ -1,10 +1,10 @@
-package com.example.fridgemanagerspring.controller;
+package com.teamproject.fridgemanagerspring.controller;
 
-import com.example.fridgemanagerspring.domain.inquiry.Inquiry;
-import com.example.fridgemanagerspring.dto.common.PaginationResponse;
-import com.example.fridgemanagerspring.dto.inquiry.request.InquiryRequest;
-import com.example.fridgemanagerspring.dto.inquiry.response.InquiryResponse;
-import com.example.fridgemanagerspring.service.InquiryService;
+import com.teamproject.fridgemanagerspring.domain.common.paginnation.PaginationResponse;
+import com.teamproject.fridgemanagerspring.domain.inquriy.Inquiry;
+import com.teamproject.fridgemanagerspring.dto.inquiry.request.InquiryRequest;
+import com.teamproject.fridgemanagerspring.dto.inquiry.response.InquiryResponse;
+import com.teamproject.fridgemanagerspring.service.InquiryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,12 +33,10 @@ public class InquiryController {
         try {
             Page<Inquiry> inquiryPage = inquiryService.getInquiryList(currentUserId, page, size);
 
-            // 1. Entity List -> DTO List 로 변환 (Java 16+ toList 활용)
             List<InquiryResponse> list = inquiryPage.getContent().stream()
                     .map(InquiryResponse::from)
                     .toList();
 
-            // 2. PaginationResponse 에 담기
             PaginationResponse<InquiryResponse> paginationResult = PaginationResponse.of(
                     page,
                     size,
@@ -46,7 +44,6 @@ public class InquiryController {
                     list
             );
 
-            // 3. Map.of 를 활용한 응답 (경고를 피하기 위해 명시적 제네릭 제거)
             return ResponseEntity.ok(Map.of(
                     "message", "문의 목록 조회 성공",
                     "data", paginationResult

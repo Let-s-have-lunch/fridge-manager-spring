@@ -1,5 +1,7 @@
 package com.teamproject.fridgemanagerspring.config;
 
+import com.teamproject.fridgemanagerspring.domain.user.User;
+import com.teamproject.fridgemanagerspring.repository.UserRepository;
 import com.teamproject.fridgemanagerspring.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -20,6 +23,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;   // 데이터 조회를 위한 UserRepository 추가
 
     @Override
     protected void doFilterInternal(
@@ -27,26 +31,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        // 1. 헤더에서 Bearer 토큰 추출
         String bearerToken = request.getHeader("Authorization");
 
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             String token = bearerToken.substring(7);
 
-            // 2. 토큰 유효성 검사
             if (jwtUtil.validateToken(token)) {
-                // 3. 토큰에서 유저 ID 추출
                 Long userId = jwtUtil.getUserIdFromToken(token);
 
-                // 4. Spring Security Context에 유저 정보(ID) 저장 (req.user 역할)
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
+                User user = userRepository.findById(userId).orElse(null);
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                if (user != null && user.getDeletedAt() == null) {
+                    SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
+
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(userId, null, Collections.singletonList(authority));
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
         }
 
-        // 5. 다음 필터(또는 컨트롤러)로 이동
         filterChain.doFilter(request, response);
     }
 }

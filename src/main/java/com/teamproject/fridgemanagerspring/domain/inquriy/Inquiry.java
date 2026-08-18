@@ -1,4 +1,4 @@
-package com.example.fridgemanagerspring.domain.inquiry;
+package com.teamproject.fridgemanagerspring.domain.inquriy;
 
 import com.teamproject.fridgemanagerspring.domain.common.BaseTimeEntity;
 import com.teamproject.fridgemanagerspring.domain.user.User;

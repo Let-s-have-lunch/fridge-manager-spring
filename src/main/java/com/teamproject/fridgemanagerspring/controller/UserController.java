@@ -2,12 +2,14 @@ package com.teamproject.fridgemanagerspring.controller;
 
 import com.teamproject.fridgemanagerspring.domain.user.User;
 import com.teamproject.fridgemanagerspring.dto.user.request.*;
+import com.teamproject.fridgemanagerspring.dto.user.response.UserResponse;
 import com.teamproject.fridgemanagerspring.service.UserService;
 import com.teamproject.fridgemanagerspring.utils.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +23,6 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/create")
-    // @Valid가 CreateUserRequest 내부의 조건들을 검사하고, 실패 시 GlobalExceptionHandler로 던집니다.
     public ResponseEntity<Map<String, Object>> createUser(@Valid @RequestBody CreateUserRequest request) {
         try {
             User newUser = userService.createUser(request);
@@ -61,6 +62,8 @@ public class UserController {
         }
     }
 
+    // 인증된 사용자만 접근 가능
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
     public ResponseEntity<Map<String, Object>> getMe(@AuthenticationPrincipal Long currentUserId) {
         try {
@@ -74,6 +77,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PatchMapping("/update")
     public ResponseEntity<Map<String, Object>> updateUser(
             @AuthenticationPrincipal Long currentUserId,
@@ -94,6 +98,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PatchMapping("/password")
     public ResponseEntity<Map<String, Object>> updatePassword(
             @AuthenticationPrincipal Long currentUserId,
@@ -123,11 +128,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<Map<String, Object>> logout() {
-        return ResponseEntity.ok(Map.of("message", "성공적으로 로그아웃되었습니다."));
-    }
-
+    @PreAuthorize("isAuthenticated()")
     @PatchMapping("/withdraw")
     public ResponseEntity<Map<String, Object>> withdrawUser(
             @AuthenticationPrincipal Long currentUserId,
