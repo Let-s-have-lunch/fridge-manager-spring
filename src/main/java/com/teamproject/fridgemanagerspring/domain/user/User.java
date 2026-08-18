@@ -80,4 +80,12 @@ public class User extends BaseTimeEntity {
     public void updatePassword(String password) {
         this.password = password;
     }
+
+    public void  updateEmail(String email) {
+        this.email = email;
+    }
+
+    public void updateRole(RoleType role) {
+        if (role != null) this.role = role;
+    }
 }

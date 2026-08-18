@@ -2,10 +2,14 @@ package com.teamproject.fridgemanagerspring.service;
 
 import com.teamproject.fridgemanagerspring.domain.fridge.Fridge;
 import com.teamproject.fridgemanagerspring.domain.user.User;
+import com.teamproject.fridgemanagerspring.dto.admin.user.request.AdminUserUpdateRequest;
 import com.teamproject.fridgemanagerspring.dto.user.request.*;
 import com.teamproject.fridgemanagerspring.repository.FridgeRepository;
 import com.teamproject.fridgemanagerspring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,14 +35,12 @@ public class UserService {
         return user;
     }
 
-    @Transactional // 에러 발생 시 롤백을 보장 (Prisma의 트랜잭션과 동일)
+    @Transactional
     public User createUser(CreateUserRequest request) {
-        // 이메일 중복 체크 (Prisma의 findUnique를 대체)
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new IllegalArgumentException("ALREADY_EXISTS_EMAIL");
         }
 
-        // 닉네임 중복 체크
         if (userRepository.existsByNickname(request.getNickname())) {
             throw new RuntimeException("ALREADY_EXISTS_NICKNAME");
         }
@@ -141,5 +143,58 @@ public class UserService {
         }
 
         user.markAsDeleted();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<User> getUserList(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return userRepository.findAllByOrderByDesc(pageable);
+    }
+
+    @Transactional
+    public User adminUpdateUser(Long targetUserId, AdminUserUpdateRequest request) {
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+
+        if (request.getNickname() != null && !request.getNickname().equals(targetUser.getNickname())) {
+            if (userRepository.existsByNicknameAndIdNot(request.getNickname(), targetUserId)) {
+                throw new RuntimeException("ALREADY_EXISTS_NICKNAME");
+            }
+            targetUser.updateNickname(request.getNickname());
+        }
+
+        if (request.getEmail() != null && !request.getEmail().equals(targetUser.getEmail())) {
+            if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+                throw new RuntimeException("ALREADY_EXISTS_EMAIL");
+            }
+            targetUser.updateEmail(request.getEmail());
+        }
+
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            targetUser.updatePassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        if (request.getBirthdate() != null) {
+            targetUser.updateBirthdate(request.getBirthdate());
+        }
+
+        if (request.getRole() != null) {
+            targetUser.updateRole(request.getRole());
+        }
+
+        return targetUser;
+    }
+
+    @Transactional
+    public User adminDeleteUser(Long targetUserId) {
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+
+        if (targetUser.getDeletedAt() != null) {
+            throw new RuntimeException("USER_ALREADY_DELETED");
+        }
+
+        targetUser.markAsDeleted();
+        return targetUser;
     }
 }

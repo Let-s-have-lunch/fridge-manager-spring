@@ -1,8 +1,11 @@
 package com.teamproject.fridgemanagerspring.repository;
 
 import com.teamproject.fridgemanagerspring.domain.user.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 // JpaRepository<엔티티 클래스, PK 데이터 타입>을 상속받습니다.
@@ -18,4 +21,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // 내 ID를 제외하고 해당 닉네임이 존재하는지 검사 (닉네임 수정 시)
     boolean existsByNicknameAndIdNot(String nickname, Long id);
+
+    List<User> findTop5ByOrderByCreatedAtDesc();
+
+    Page<User> findAllByOrderByDesc(Pageable pageable);
 }

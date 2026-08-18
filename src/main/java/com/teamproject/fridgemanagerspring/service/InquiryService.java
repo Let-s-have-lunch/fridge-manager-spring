@@ -2,6 +2,7 @@ package com.teamproject.fridgemanagerspring.service;
 
 import com.teamproject.fridgemanagerspring.domain.inquriy.Inquiry;
 import com.teamproject.fridgemanagerspring.domain.user.User;
+import com.teamproject.fridgemanagerspring.dto.admin.request.InquiryAnswerRequest;
 import com.teamproject.fridgemanagerspring.dto.inquiry.request.InquiryRequest;
 import com.teamproject.fridgemanagerspring.repository.InquiryRepository;
 import com.teamproject.fridgemanagerspring.repository.UserRepository;
@@ -72,5 +73,26 @@ public class InquiryService {
         }
 
         inquiryRepository.delete(inquiry);
+    }
+    @Transactional(readOnly = true)
+    public Page<Inquiry> getAllInquiryList(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return inquiryRepository.findAllByOrderByIdDesc(pageable);
+    }
+
+    @Transactional
+    public Inquiry answerInquiry(Long inquiryId, InquiryAnswerRequest request) {
+        Inquiry inquiry = getInquiryById(inquiryId);
+
+        inquiry.answerInquiry(request.getAnswer());
+
+        return inquiry;
+    }
+
+    @Transactional
+    public void deleteInquiryAnswer(Long inquiryId) {
+        Inquiry inquiry = getInquiryById(inquiryId);
+
+        inquiry.deleteAnswer();
     }
 }

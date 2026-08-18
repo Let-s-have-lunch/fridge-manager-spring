@@ -49,4 +49,9 @@ public class Inquiry extends BaseTimeEntity {
         this.answer = answer;
         this.answeredAt = LocalDateTime.now();
     }
+
+    public void deleteAnswer() {
+        this.answer = null;
+        this.answeredAt = null;
+    }
 }
