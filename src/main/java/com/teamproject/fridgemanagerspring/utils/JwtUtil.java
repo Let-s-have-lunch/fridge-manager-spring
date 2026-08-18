@@ -3,10 +3,12 @@ package com.teamproject.fridgemanagerspring.utils;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+@Component
 public class JwtUtil {
     private final String secretString = "your_secret_key_here";
     private final SecretKey key = Keys.hmacShaKeyFor(secretString.getBytes());
