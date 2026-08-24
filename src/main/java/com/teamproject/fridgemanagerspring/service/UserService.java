@@ -148,7 +148,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public Page<User> getUserList(int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        return userRepository.findAllByOrderByDesc(pageable);
+        return userRepository.findAllByOrderByCreatedAtDesc(pageable);
     }
 
     @Transactional
