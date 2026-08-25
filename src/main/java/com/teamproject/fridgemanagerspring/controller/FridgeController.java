@@ -20,7 +20,7 @@ public class FridgeController {
 
     private final FridgeService fridgeService;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Map<String, Object>> getFridgeList(@AuthenticationPrincipal Long currentUserId) {
         try {
             List<FridgeResponse> list = fridgeService.getFridgeList(currentUserId).stream()
