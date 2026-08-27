@@ -97,7 +97,7 @@ public class StatisticsService {
                         .id(p.getId())
                         .name(p.getName())
                         .expirationDate(p.getExpirationDate())
-                        .icon(p.getCategory() != null ? "icon_name" : "dots-horizontal")
+                        .icon(p.getCategory() != null ? p.getCategory().getIcon() : "tag") // 👈 실제 카테고리 icon 꺼내기
                         .build())
                 .collect(Collectors.toList());
 
@@ -107,7 +107,7 @@ public class StatisticsService {
                         .id(p.getId())
                         .name(p.getName())
                         .expirationDate(p.getExpirationDate())
-                        .icon(p.getCategory() != null ? "icon_name" : "dots-horizontal")
+                        .icon(p.getCategory() != null ? p.getCategory().getIcon() : "tag") // 👈 실제 카테고리 icon 꺼내기
                         .build())
                 .collect(Collectors.toList());
 
@@ -120,11 +120,18 @@ public class StatisticsService {
             Long count = (Long) row[1];
             Long sumPrice = (Long) row[2];
 
+            // 💡 해당 상품명의 카테고리 아이콘 조회 (없으면 기본 "tag")
+            String productIcon = productRepository.findAll().stream()
+                    .filter(p -> p.getName().equals(name) && p.getCategory() != null)
+                    .map(p -> p.getCategory().getIcon())
+                    .findFirst()
+                    .orElse("tag");
+
             top3Products.add(StatisticsResponse.Top3Product.builder()
                     .name(name)
                     .useCount(count)
                     .totalPrice(sumPrice.intValue())
-                    .icon("tag")
+                    .icon(productIcon) // 👈 조회한 아이콘 주입
                     .build());
         }
 
