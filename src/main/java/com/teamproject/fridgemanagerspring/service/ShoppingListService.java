@@ -26,7 +26,7 @@ public class ShoppingListService {
     }
 
     @Transactional(readOnly = true)
-    private ShoppingList getItemById(Long userId, Long itemId) {
+    public ShoppingList getItemById(Long userId, Long itemId) {
         return shoppingListRepository.findByIdAndUserId(itemId, userId)
                 .orElseThrow(() -> new RuntimeException("NOT_FOUND_ITEM"));
     }
