@@ -12,6 +12,7 @@ public class CategoryResponse {
     private Long id;
     private String name;
     private Boolean isDefault;
+    private String icon;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -19,6 +20,7 @@ public class CategoryResponse {
         return CategoryResponse.builder()
                 .id(category.getId())
                 .name(category.getName())
+                .icon(category.getIcon())
                 .isDefault(category.getIsDefault())
                 .createdAt(category.getCreatedAt())
                 .updatedAt(category.getUpdatedAt())

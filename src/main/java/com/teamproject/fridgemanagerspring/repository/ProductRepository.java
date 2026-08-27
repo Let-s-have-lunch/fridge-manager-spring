@@ -4,9 +4,11 @@ import com.teamproject.fridgemanagerspring.domain.enums.ProductStatus;
 import com.teamproject.fridgemanagerspring.domain.product.Product;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,4 +80,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("startDate") java.time.LocalDateTime startDate,
             @Param("endDate") java.time.LocalDateTime endDate
     );
+
+    // 💡 통계 시딩 테스트용: JPA Auditing을 무시하고 강제로 업데이트 날짜를 변경하는 쿼리
+    @Modifying
+    @Query("UPDATE Product p SET p.updatedAt = :updatedAt WHERE p.name = :name AND p.status = :status")
+    void updateUpdatedAtForSeed(@Param("name") String name,
+                                @Param("status") ProductStatus status,
+                                @Param("updatedAt") LocalDateTime updatedAt);
 }

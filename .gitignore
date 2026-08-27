@@ -36,8 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 
-src/main/resources/app-dev.yaml
+src/main/resources/application-prod.yaml
 src/main/resources/application-dev.yaml
-
-
-/src/main/resources

@@ -33,4 +33,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             @Param("categoryId") Long categoryId);
 
     Optional<Category> findByIdAndDeletedAtIsNull(Long id);
+
+    Optional<Category> findByName(String name);
 }

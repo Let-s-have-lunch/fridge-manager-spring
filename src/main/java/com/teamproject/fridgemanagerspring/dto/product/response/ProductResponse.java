@@ -35,7 +35,7 @@ public class ProductResponse {
     public static class CategoryDto {
         private Long id;
         private String name;
-        // private String icon; // Category 엔티티에 icon 속성이 있다면 포함해 주세요.
+        private String icon;
     }
 
     // Entity를 DTO로 변환하는 정적 팩토리 메서드
@@ -59,6 +59,7 @@ public class ProductResponse {
                 .category(CategoryDto.builder()
                         .id(product.getCategory().getId())
                         .name(product.getCategory().getName())
+                        .icon(product.getCategory().getIcon())
                         .build())
                 .build();
     }
